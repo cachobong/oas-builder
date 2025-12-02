@@ -6,15 +6,17 @@ import { InfoEditor } from '@/components/editors/InfoEditor';
 import { ServersEditor } from '@/components/editors/ServersEditor';
 import { PathsEditor } from '@/components/editors/PathsEditor';
 import { SchemasEditor } from '@/components/editors/SchemasEditor';
+import { TagsEditor } from '@/components/editors/TagsEditor';
 import { Preview } from '@/components/Preview';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 
-type Tab = 'info' | 'servers' | 'paths' | 'schemas';
+type Tab = 'info' | 'servers' | 'tags' | 'paths' | 'schemas';
 
 const tabs: { id: Tab; label: string; description: string }[] = [
   { id: 'info', label: 'API Info', description: 'Basic information about your API' },
   { id: 'servers', label: 'Servers', description: 'Server URLs and environments' },
+  { id: 'tags', label: 'Tags', description: 'Tags to categorize and group your endpoints' },
   { id: 'paths', label: 'Endpoints', description: 'API endpoints and operations' },
   { id: 'schemas', label: 'Schemas', description: 'Reusable data models' },
 ];
@@ -113,10 +115,15 @@ export default function Home() {
                 <ServersEditor servers={spec.servers} onChange={(servers) => updateSpec({ servers })} />
               )}
 
+              {activeTab === 'tags' && (
+                <TagsEditor tags={spec.tags || []} onChange={(tags) => updateSpec({ tags })} />
+              )}
+
               {activeTab === 'paths' && (
                 <PathsEditor
                   paths={spec.paths}
                   schemas={spec.schemas}
+                  availableTags={spec.tags || []}
                   onChange={(paths) => updateSpec({ paths })}
                 />
               )}

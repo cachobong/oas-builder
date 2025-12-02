@@ -22,6 +22,7 @@ src/
 │   ├── editors/
 │   │   ├── InfoEditor.tsx      # API info form (title, version, contact, license)
 │   │   ├── ServersEditor.tsx   # Server URLs management
+│   │   ├── TagsEditor.tsx      # Root-level tags management
 │   │   ├── PathsEditor.tsx     # Endpoints and operations editor
 │   │   └── SchemasEditor.tsx   # Reusable schema definitions
 │   ├── ui/
@@ -57,3 +58,4 @@ npm run lint   # Run ESLint
 - **Component Structure**: UI primitives in `components/ui/`, feature editors in `components/editors/`
 - **Export Flow**: `generateOpenAPISpec()` transforms internal data model to valid OpenAPI 3.1 format
 - **Styling**: Tailwind utility classes with `cn()` helper for conditional classes
+- **Tags Flow**: Tags are defined at root level (TagsEditor) and selected via checkboxes in PathsEditor operations

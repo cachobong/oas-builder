@@ -12,6 +12,7 @@ import { generateId, cn } from '@/lib/utils';
 interface PathsEditorProps {
   paths: OpenAPIPath[];
   schemas: { id: string; name: string }[];
+  availableTags: { name: string; description?: string }[];
   onChange: (paths: OpenAPIPath[]) => void;
 }
 
@@ -58,7 +59,7 @@ const METHOD_COLORS: Record<string, string> = {
   delete: 'bg-red-100 text-red-800 border-red-200',
 };
 
-export function PathsEditor({ paths, schemas, onChange }: PathsEditorProps) {
+export function PathsEditor({ paths, schemas, availableTags, onChange }: PathsEditorProps) {
   const [expandedPath, setExpandedPath] = useState<string | null>(null);
   const [expandedOperation, setExpandedOperation] = useState<string | null>(null);
 
@@ -361,16 +362,43 @@ export function PathsEditor({ paths, schemas, onChange }: PathsEditorProps) {
                               rows={2}
                             />
 
-                            <Input
-                              label="Tags (comma-separated)"
-                              value={operation.tags?.join(', ') || ''}
-                              onChange={(e) =>
-                                updateOperation(path.id, operation.id, {
-                                  tags: e.target.value.split(',').map((t) => t.trim()).filter(Boolean),
-                                })
-                              }
-                              placeholder="users, auth"
-                            />
+                            {/* Tags Selection */}
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-gray-700">Tags</label>
+                              {availableTags.length === 0 ? (
+                                <p className="text-sm text-gray-500">
+                                  No tags available. Add tags in the Tags tab first.
+                                </p>
+                              ) : (
+                                <div className="flex flex-wrap gap-2">
+                                  {availableTags.map((tag) => (
+                                    <label
+                                      key={tag.name}
+                                      className={cn(
+                                        'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border cursor-pointer transition-colors',
+                                        operation.tags?.includes(tag.name)
+                                          ? 'bg-indigo-50 border-indigo-300 text-indigo-700'
+                                          : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                                      )}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        checked={operation.tags?.includes(tag.name) || false}
+                                        onChange={(e) => {
+                                          const currentTags = operation.tags || [];
+                                          const newTags = e.target.checked
+                                            ? [...currentTags, tag.name]
+                                            : currentTags.filter((t) => t !== tag.name);
+                                          updateOperation(path.id, operation.id, { tags: newTags });
+                                        }}
+                                        className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                      />
+                                      <span className="text-sm">{tag.name}</span>
+                                    </label>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
 
                             {/* Parameters */}
                             <div className="space-y-3">
