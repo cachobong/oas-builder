@@ -1,6 +1,6 @@
 # OpenAPI Builder
 
-A web application for generating OpenAPI 3.0 specifications through a graphical interface.
+A web application for generating OpenAPI 3.1 specifications through a graphical interface.
 
 ## Tech Stack
 
@@ -55,5 +55,5 @@ npm run lint   # Run ESLint
 
 - **State Management**: Single `useOpenAPISpec` hook manages all spec data with automatic localStorage persistence
 - **Component Structure**: UI primitives in `components/ui/`, feature editors in `components/editors/`
-- **Export Flow**: `generateOpenAPISpec()` transforms internal data model to valid OpenAPI 3.0 format
+- **Export Flow**: `generateOpenAPISpec()` transforms internal data model to valid OpenAPI 3.1 format
 - **Styling**: Tailwind utility classes with `cn()` helper for conditional classes

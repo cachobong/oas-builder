@@ -64,7 +64,7 @@ function PropertyEditor({
 }: PropertyEditorProps) {
   const [showDetails, setShowDetails] = useState(false);
 
-  const getFormatsForType = (type: string) => {
+  const getFormatsForType = (type?: string) => {
     if (type === 'string') return STRING_FORMATS;
     if (type === 'number' || type === 'integer') return NUMBER_FORMATS;
     return [];
@@ -82,7 +82,7 @@ function PropertyEditor({
           />
           <Select
             label="Type"
-            value={property.type}
+            value={property.type || 'string'}
             onChange={(e) => onUpdate(propertyName, { ...property, type: e.target.value as SchemaObject['type'] })}
             options={DATA_TYPES}
           />
@@ -126,7 +126,7 @@ function PropertyEditor({
           />
           <Input
             label="Example"
-            value={property.example || ''}
+            value={String(property.example ?? '')}
             onChange={(e) => onUpdate(propertyName, { ...property, example: e.target.value || undefined })}
             placeholder="Example value"
           />

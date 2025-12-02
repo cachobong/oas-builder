@@ -2,7 +2,7 @@
 
 ## Current State
 
-The application is a functional MVP for building basic OpenAPI 3.0 specifications with:
+The application is a functional MVP for building basic OpenAPI 3.1 specifications with:
 - API info, servers, paths, and schemas editing
 - JSON/YAML export with live preview
 - localStorage persistence
@@ -18,7 +18,7 @@ The application is a functional MVP for building basic OpenAPI 3.0 specification
 - [ ] Handle import errors gracefully with detailed feedback
 
 ### 1.2 Validation Engine
-- [ ] Real-time validation against OpenAPI 3.0 spec
+- [ ] Real-time validation against OpenAPI 3.1 spec
 - [ ] Required field enforcement with visual indicators
 - [ ] Duplicate detection (paths, operationIds)
 - [ ] URL/email format validation
@@ -59,8 +59,9 @@ The application is a functional MVP for building basic OpenAPI 3.0 specification
 - [ ] Number constraints: `minimum`, `maximum`, `multipleOf`
 - [ ] Array constraints: `minItems`, `maxItems`, `uniqueItems`
 - [ ] Default values for all property types
-- [ ] Nullable type support
+- [ ] Multi-type support (OpenAPI 3.1 type arrays)
 - [ ] `additionalProperties` control
+- [ ] `const` keyword support UI
 
 ### 2.3 Request/Response Improvements
 - [ ] Multiple content types per request body
@@ -130,7 +131,7 @@ The application is a functional MVP for building basic OpenAPI 3.0 specification
 - [ ] Export to Postman collection
 - [ ] Export to Swagger UI HTML
 - [ ] Export to ReDoc HTML
-- [ ] OpenAPI 3.1 format option
+- [ ] OpenAPI 3.0 backward compatibility export option
 - [ ] Partial export (selected endpoints only)
 
 ### 4.3 Code Generation Integration
@@ -251,17 +252,17 @@ These are small, high-impact improvements:
 ## Success Metrics
 
 ### Phase 1 Complete When:
-- Users can import any valid OpenAPI 3.0 spec
+- Users can import any valid OpenAPI 3.1 spec
 - Zero data loss from crashes or errors
 - Validation catches 95% of spec errors before export
 
 ### Phase 2 Complete When:
 - Can build specs for OAuth2-protected APIs
-- Schema editor supports all JSON Schema draft-07 features
+- Schema editor supports all JSON Schema 2020-12 features (OpenAPI 3.1)
 - Full request/response customization available
 
 ### Phase 3 Complete When:
-- Feature parity with Swagger Editor for OpenAPI 3.0
+- Feature parity with Swagger Editor for OpenAPI 3.1
 - Can document webhooks and async operations
 
 ### Phase 4 Complete When:

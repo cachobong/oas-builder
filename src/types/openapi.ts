@@ -11,7 +11,9 @@ export interface OpenAPIInfo {
   license?: {
     name: string;
     url?: string;
+    identifier?: string;
   };
+  summary?: string;
 }
 
 export interface OpenAPIServer {
@@ -29,15 +31,20 @@ export interface OpenAPIParameter {
 }
 
 export interface SchemaObject {
-  type: 'string' | 'number' | 'integer' | 'boolean' | 'array' | 'object';
+  type?: 'string' | 'number' | 'integer' | 'boolean' | 'array' | 'object' | 'null';
+  types?: ('string' | 'number' | 'integer' | 'boolean' | 'array' | 'object' | 'null')[];
   format?: string;
   description?: string;
-  example?: string;
+  example?: unknown;
+  examples?: unknown[];
   items?: SchemaObject;
   properties?: Record<string, SchemaObject>;
   required?: string[];
   enum?: string[];
+  const?: unknown;
   $ref?: string;
+  contentMediaType?: string;
+  contentEncoding?: string;
 }
 
 export interface OpenAPIRequestBody {
@@ -95,7 +102,7 @@ export interface OpenAPISpec {
 }
 
 export const DEFAULT_SPEC: OpenAPISpec = {
-  openapi: '3.0.3',
+  openapi: '3.1.0',
   info: {
     title: 'My API',
     version: '1.0.0',
