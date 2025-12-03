@@ -5,166 +5,13 @@ import { OpenAPISchema, SchemaObject } from '@/types/openapi';
 import { Input } from '@/components/ui/Input';
 import { TextArea } from '@/components/ui/TextArea';
 import { Button } from '@/components/ui/Button';
-import { Select } from '@/components/ui/Select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { SchemaPropertyEditor } from './SchemaPropertyEditor';
 import { generateId, cn } from '@/lib/utils';
 
 interface SchemasEditorProps {
   schemas: OpenAPISchema[];
   onChange: (schemas: OpenAPISchema[]) => void;
-}
-
-const DATA_TYPES = [
-  { value: 'string', label: 'String' },
-  { value: 'number', label: 'Number' },
-  { value: 'integer', label: 'Integer' },
-  { value: 'boolean', label: 'Boolean' },
-  { value: 'array', label: 'Array' },
-  { value: 'object', label: 'Object' },
-];
-
-const STRING_FORMATS = [
-  { value: '', label: 'None' },
-  { value: 'date', label: 'Date' },
-  { value: 'date-time', label: 'Date-Time' },
-  { value: 'email', label: 'Email' },
-  { value: 'uri', label: 'URI' },
-  { value: 'uuid', label: 'UUID' },
-  { value: 'password', label: 'Password' },
-];
-
-const NUMBER_FORMATS = [
-  { value: '', label: 'None' },
-  { value: 'float', label: 'Float' },
-  { value: 'double', label: 'Double' },
-  { value: 'int32', label: 'Int32' },
-  { value: 'int64', label: 'Int64' },
-];
-
-interface PropertyEditorProps {
-  property: SchemaObject;
-  propertyName: string;
-  allSchemas: OpenAPISchema[];
-  onUpdate: (name: string, property: SchemaObject) => void;
-  onRemove: () => void;
-  onRename: (newName: string) => void;
-  isRequired: boolean;
-  onRequiredChange: (required: boolean) => void;
-}
-
-function PropertyEditor({
-  property,
-  propertyName,
-  allSchemas,
-  onUpdate,
-  onRemove,
-  onRename,
-  isRequired,
-  onRequiredChange,
-}: PropertyEditorProps) {
-  const [showDetails, setShowDetails] = useState(false);
-
-  const getFormatsForType = (type?: string) => {
-    if (type === 'string') return STRING_FORMATS;
-    if (type === 'number' || type === 'integer') return NUMBER_FORMATS;
-    return [];
-  };
-
-  return (
-    <div className="p-3 bg-white rounded-lg border border-gray-200">
-      <div className="flex items-center gap-3">
-        <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-3">
-          <Input
-            label="Name"
-            value={propertyName}
-            onChange={(e) => onRename(e.target.value)}
-            placeholder="propertyName"
-          />
-          <Select
-            label="Type"
-            value={property.type || 'string'}
-            onChange={(e) => onUpdate(propertyName, { ...property, type: e.target.value as SchemaObject['type'] })}
-            options={DATA_TYPES}
-          />
-          {getFormatsForType(property.type).length > 0 && (
-            <Select
-              label="Format"
-              value={property.format || ''}
-              onChange={(e) => onUpdate(propertyName, { ...property, format: e.target.value || undefined })}
-              options={getFormatsForType(property.type)}
-            />
-          )}
-          <div className="flex items-end gap-2">
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={isRequired}
-                onChange={(e) => onRequiredChange(e.target.checked)}
-                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-              />
-              Required
-            </label>
-          </div>
-        </div>
-        <div className="flex gap-2 mt-6">
-          <Button variant="ghost" size="sm" onClick={() => setShowDetails(!showDetails)}>
-            {showDetails ? 'Hide' : 'Details'}
-          </Button>
-          <Button variant="ghost" size="sm" onClick={onRemove}>
-            Remove
-          </Button>
-        </div>
-      </div>
-
-      {showDetails && (
-        <div className="mt-3 pt-3 border-t border-gray-200 space-y-3">
-          <Input
-            label="Description"
-            value={property.description || ''}
-            onChange={(e) => onUpdate(propertyName, { ...property, description: e.target.value || undefined })}
-            placeholder="Property description"
-          />
-          <Input
-            label="Example"
-            value={String(property.example ?? '')}
-            onChange={(e) => onUpdate(propertyName, { ...property, example: e.target.value || undefined })}
-            placeholder="Example value"
-          />
-          {property.type === 'string' && (
-            <Input
-              label="Enum Values (comma-separated)"
-              value={property.enum?.join(', ') || ''}
-              onChange={(e) =>
-                onUpdate(propertyName, {
-                  ...property,
-                  enum: e.target.value
-                    ? e.target.value
-                        .split(',')
-                        .map((v) => v.trim())
-                        .filter(Boolean)
-                    : undefined,
-                })
-              }
-              placeholder="value1, value2, value3"
-            />
-          )}
-          {property.type === 'array' && (
-            <Select
-              label="Array Items Type"
-              value={property.items?.type || 'string'}
-              onChange={(e) =>
-                onUpdate(propertyName, { ...property, items: { type: e.target.value as SchemaObject['type'] } })
-              }
-              options={[
-                ...DATA_TYPES,
-                ...allSchemas.map((s) => ({ value: `$ref:${s.name}`, label: `Ref: ${s.name}` })),
-              ]}
-            />
-          )}
-        </div>
-      )}
-    </div>
-  );
 }
 
 export function SchemasEditor({ schemas, onChange }: SchemasEditorProps) {
@@ -226,7 +73,7 @@ export function SchemasEditor({ schemas, onChange }: SchemasEditorProps) {
 
   const renameProperty = (schemaId: string, oldName: string, newName: string) => {
     const schema = schemas.find((s) => s.id === schemaId);
-    if (!schema || !schema.schema.properties) return;
+    if (!schema || !schema.schema.properties || oldName === newName) return;
 
     const { [oldName]: property, ...rest } = schema.schema.properties;
     const required = schema.schema.required || [];
@@ -236,7 +83,7 @@ export function SchemasEditor({ schemas, onChange }: SchemasEditorProps) {
       schema: {
         ...schema.schema,
         properties: { ...rest, [newName]: property },
-        required: newRequired,
+        required: newRequired.length > 0 ? newRequired : undefined,
       },
     });
   };
@@ -249,7 +96,7 @@ export function SchemasEditor({ schemas, onChange }: SchemasEditorProps) {
     updateSchema(schemaId, {
       schema: {
         ...schema.schema,
-        properties: rest,
+        properties: Object.keys(rest).length > 0 ? rest : undefined,
         required: schema.schema.required?.filter((r) => r !== propertyName),
       },
     });
@@ -263,7 +110,7 @@ export function SchemasEditor({ schemas, onChange }: SchemasEditorProps) {
     const newRequired = isRequired ? [...required, propertyName] : required.filter((r) => r !== propertyName);
 
     updateSchema(schemaId, {
-      schema: { ...schema.schema, required: newRequired },
+      schema: { ...schema.schema, required: newRequired.length > 0 ? newRequired : undefined },
     });
   };
 
@@ -347,15 +194,15 @@ export function SchemasEditor({ schemas, onChange }: SchemasEditorProps) {
                       </div>
 
                       {Object.entries(schema.schema.properties || {}).map(([propName, prop]) => (
-                        <PropertyEditor
+                        <SchemaPropertyEditor
                           key={propName}
                           propertyName={propName}
-                          property={prop}
-                          allSchemas={schemas}
-                          onUpdate={(name, property) => updateProperty(schema.id, name, property)}
-                          onRemove={() => removeProperty(schema.id, propName)}
-                          onRename={(newName) => renameProperty(schema.id, propName, newName)}
+                          schema={prop}
+                          depth={0}
                           isRequired={schema.schema.required?.includes(propName) || false}
+                          onUpdate={(updated) => updateProperty(schema.id, propName, updated)}
+                          onRename={(newName) => renameProperty(schema.id, propName, newName)}
+                          onRemove={() => removeProperty(schema.id, propName)}
                           onRequiredChange={(required) => toggleRequired(schema.id, propName, required)}
                         />
                       ))}

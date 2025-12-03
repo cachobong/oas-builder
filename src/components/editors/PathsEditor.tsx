@@ -1,17 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { OpenAPIPath, OpenAPIOperation, OpenAPIParameter, OpenAPIResponse, SchemaObject } from '@/types/openapi';
+import { OpenAPIPath, OpenAPIOperation, OpenAPIParameter, OpenAPIResponse, SchemaObject, OpenAPISchema } from '@/types/openapi';
 import { Input } from '@/components/ui/Input';
 import { TextArea } from '@/components/ui/TextArea';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { RequestBodyEditor } from '@/components/editors/RequestBodyEditor';
 import { generateId, cn } from '@/lib/utils';
 
 interface PathsEditorProps {
   paths: OpenAPIPath[];
-  schemas: { id: string; name: string }[];
+  schemas: OpenAPISchema[];
   availableTags: { name: string; description?: string }[];
   onChange: (paths: OpenAPIPath[]) => void;
 }
@@ -466,7 +467,7 @@ export function PathsEditor({ paths, schemas, availableTags, onChange }: PathsEd
                               ))}
                             </div>
 
-                            {/* Request Body Toggle */}
+                            {/* Request Body */}
                             {['post', 'put', 'patch'].includes(operation.method) && (
                               <div className="space-y-3">
                                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
@@ -479,34 +480,13 @@ export function PathsEditor({ paths, schemas, availableTags, onChange }: PathsEd
                                   Has Request Body
                                 </label>
 
-                                {operation.requestBody && schemas.length > 0 && (
-                                  <Select
-                                    label="Schema Reference"
-                                    value={
-                                      (operation.requestBody.content['application/json']?.schema as { $ref?: string }).$ref ||
-                                      ''
+                                {operation.requestBody && (
+                                  <RequestBodyEditor
+                                    requestBody={operation.requestBody}
+                                    schemas={schemas}
+                                    onChange={(requestBody) =>
+                                      updateOperation(path.id, operation.id, { requestBody })
                                     }
-                                    onChange={(e) =>
-                                      updateOperation(path.id, operation.id, {
-                                        requestBody: {
-                                          ...operation.requestBody!,
-                                          content: {
-                                            'application/json': {
-                                              schema: e.target.value
-                                                ? { $ref: e.target.value }
-                                                : { type: 'object' },
-                                            },
-                                          },
-                                        },
-                                      })
-                                    }
-                                    options={[
-                                      { value: '', label: 'Inline Object' },
-                                      ...schemas.map((s) => ({
-                                        value: `#/components/schemas/${s.name}`,
-                                        label: s.name,
-                                      })),
-                                    ]}
                                   />
                                 )}
                               </div>

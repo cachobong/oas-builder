@@ -20,11 +20,13 @@ src/
 │   └── page.tsx         # Main application page
 ├── components/
 │   ├── editors/
-│   │   ├── InfoEditor.tsx      # API info form (title, version, contact, license)
-│   │   ├── ServersEditor.tsx   # Server URLs management
-│   │   ├── TagsEditor.tsx      # Root-level tags management
-│   │   ├── PathsEditor.tsx     # Endpoints and operations editor
-│   │   └── SchemasEditor.tsx   # Reusable schema definitions
+│   │   ├── InfoEditor.tsx           # API info form (title, version, contact, license)
+│   │   ├── ServersEditor.tsx        # Server URLs management
+│   │   ├── TagsEditor.tsx           # Root-level tags management
+│   │   ├── PathsEditor.tsx          # Endpoints and operations editor
+│   │   ├── RequestBodyEditor.tsx    # Detailed request body with nested objects
+│   │   ├── SchemasEditor.tsx        # Reusable schema definitions
+│   │   └── SchemaPropertyEditor.tsx # Shared recursive property editor component
 │   ├── ui/
 │   │   ├── Button.tsx    # Button component with variants
 │   │   ├── Card.tsx      # Card container components
@@ -59,3 +61,5 @@ npm run lint   # Run ESLint
 - **Export Flow**: `generateOpenAPISpec()` transforms internal data model to valid OpenAPI 3.1 format
 - **Styling**: Tailwind utility classes with `cn()` helper for conditional classes
 - **Tags Flow**: Tags are defined at root level (TagsEditor) and selected via checkboxes in PathsEditor operations
+- **Request Body**: RequestBodyEditor supports inline schema definition with unlimited nested objects, arrays of objects, and schema references
+- **Schema Properties**: SchemaPropertyEditor is a shared recursive component used by both SchemasEditor and RequestBodyEditor for consistent nested object/array editing
